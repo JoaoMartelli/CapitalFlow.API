@@ -1,11 +1,12 @@
 from fastapi import FastAPI
-from api.UsuarioController import router as usuario_router
+from api import usuario_router, ativo_router
 from repositorio.contexto.contexto import Base, contexto
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(usuario_router)
+app.include_router(ativo_router)
 
 Base.metadata.create_all(bind=contexto)
 

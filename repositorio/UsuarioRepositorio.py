@@ -17,7 +17,7 @@ class UsuarioRepositorio:
         return self._contexto.query(Usuario).filter_by(Ativo = True).all()
     
     def ObterUsuarioPorId(self, id):
-        return self._contexto.query(Usuario).filter_by(id = id, Ativo = True).first()
+        return self._contexto.query(Usuario).filter_by(Id = id, Ativo = True).first()
     
     def ObterUsuarioPorEmail(self, email):
         return self._contexto.query(Usuario).filter_by(Email = email, Ativo = True).first()

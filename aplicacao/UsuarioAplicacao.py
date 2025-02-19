@@ -12,10 +12,10 @@ class UsuarioAplicacao:
         usuario = self._usuarioRepositorio.ObterUsuarioPorEmail(email)
 
         if not usuario:
-            raise Exception("Email ou senha incorreto!")
+            raise Exception("Email ou senha incorreto.")
 
         if usuario.Senha != senha:
-            raise Exception("Email ou senha incorreto!")
+            raise Exception("Email ou senha incorreto.")
         
         return usuario.Id
     
@@ -54,3 +54,11 @@ class UsuarioAplicacao:
 
     def ObterTodosUsuarios(self):
         return self._usuarioRepositorio.ObterTodosUsuarios()
+    
+    def ObterUsuarioPorId(self, usuarioId: int):
+        usuario = self._usuarioRepositorio.ObterUsuarioPorId(usuarioId)
+        
+        if not usuario:
+            raise Exception("Usuário não encontrado!")
+        
+        return usuario
