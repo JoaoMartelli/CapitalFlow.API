@@ -14,7 +14,10 @@ class UsuarioRepositorio:
         self._contexto.commit()
 
     def ObterTodosUsuarios(self):
-        return self._contexto.query(Usuario).filter_by(ativo = True).all()
+        return self._contexto.query(Usuario).filter_by(Ativo = True).all()
     
     def ObterUsuarioPorId(self, id):
-        return self._contexto.query(Usuario).filter_by(id = id, ativo = True).first()
+        return self._contexto.query(Usuario).filter_by(id = id, Ativo = True).first()
+    
+    def ObterUsuarioPorEmail(self, email):
+        return self._contexto.query(Usuario).filter_by(Email = email, Ativo = True).first()
