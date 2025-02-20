@@ -13,8 +13,7 @@ class UsuarioRepositorio:
         self._contexto.merge(usuario)
         self._contexto.commit()
 
-    def ObterTodosUsuarios(self):
-        return self._contexto.query(Usuario).filter_by(Ativo = True).all()
+    x
     
     def ObterUsuarioPorId(self, id):
         return self._contexto.query(Usuario).filter_by(Id = id, Ativo = True).first()

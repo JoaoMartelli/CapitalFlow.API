@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from aplicacao import AtivoAplicacao
 from repositorio.models import Ativo
+from services.CotacaoServices import CotacaoServico
 
 router = APIRouter(
     prefix="/ativo",
@@ -31,16 +32,43 @@ class AtivoListarResponse(BaseModel):
     tag: str
     ativo: bool
 
+class AtivoListarComCotacaoResponse(BaseModel):
+    ativoId: int
+    nome: str
+    tag: str
+    ativo: bool
+    cotacao: float
+
 @router.post("/Criar")
-def CriarUsuario(ativoCriar: AtivoCriarRequest):
+def CriarAtivo(ativoCriar: AtivoCriarRequest):
     try:
         ativo = Ativo(nome=ativoCriar.nome, tag=ativoCriar.tag)
         _ativoAplicacao.CriarAtivo(ativo)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-@router.get("/ListarAtivosAtivos")
-def ObterTodosUsuarios():
+
+@router.get("/ListarAtivosComCotacao", response_model=list[AtivoListarComCotacaoResponse])
+def ObterAtivosComCotacao():
+    try:
+        ativos = _ativoAplicacao.ObterTodosAtivos()
+        
+        listaAtivos = [
+            AtivoListarComCotacaoResponse(
+                ativoId=ativo.Id,
+                nome=ativo.Nome,
+                tag=ativo.Tag,
+                ativo=ativo.Ativo,
+                cotacao=CotacaoServico.ObterCotacaoAtualPorTag(ativo.Tag)
+            ) 
+            for ativo in ativos
+        ]
+
+        return listaAtivos
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/ListarAtivos")
+def ObterTodosAtivos():
     try:
         ativos = _ativoAplicacao.ObterTodosAtivos()
 
@@ -59,7 +87,7 @@ def ObterTodosUsuarios():
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.get("/ObterAtivoPorId/{ativoId}")
-def ObterTodosUsuarios(ativoId: int):
+def ObterAtivoPorId(ativoId: int):
     try:
         obterAtivo = _ativoAplicacao.ObterAtivoPorId(ativoId)
 
@@ -82,7 +110,7 @@ def AtualizarInformacoes(ativoAtualizarInformacoes: AtivoAtualizarInformacoesReq
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.delete("/Desativar/{ativoId}")
-def DesativarUsuario(ativoId: int):
+def DesativarAtivo(ativoId: int):
     try:
         _ativoAplicacao.DesativarAtivo(ativoId)
     except Exception as e:
