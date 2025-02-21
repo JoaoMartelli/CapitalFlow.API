@@ -39,3 +39,6 @@ class AtivoAplicacao:
             raise Exception("Ativo não encontrado!")
         
         return ativo
+    
+    def ObterAtivosPorUsuarioId(self, usuarioId: int):
+        return self._ativoRepositorio.ObterAtivosPorUsuarioId(usuarioId)

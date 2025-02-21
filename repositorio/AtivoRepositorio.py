@@ -1,4 +1,5 @@
 from repositorio.models import Ativo
+from repositorio.models import Investimento
 from .contexto.contexto import session
 
 class AtivoRepositorio:
@@ -18,3 +19,11 @@ class AtivoRepositorio:
     
     def ObterAtivoPorId(self, id):
         return self._contexto.query(Ativo).filter_by(Id = id, Ativo = True).first()
+    
+    def ObterAtivosPorUsuarioId(self, usuarioId: int):
+        return (
+            self._contexto.query(Investimento, Ativo)
+            .join(Ativo, Investimento.AtivoId == Ativo.Id)
+            .filter(Investimento.UsuarioId == usuarioId, Investimento.Ativo == True)
+            .all()
+        )

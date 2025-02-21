@@ -39,6 +39,18 @@ class AtivoListarComCotacaoResponse(BaseModel):
     ativo: bool
     cotacao: float
 
+class InvestimentosDeUmUsuario(BaseModel):
+    ativoId: int
+    investimentoId: int
+    nomeAtivo: str
+    tag: str
+    quantidadeAcoes: int
+    precoMedio: float
+    cotacao: float
+    rendimento: float
+    totalInvestido: float
+    rendimentoTotal: float
+
 @router.post("/Criar")
 def CriarAtivo(ativoCriar: AtivoCriarRequest):
     try:
@@ -99,6 +111,35 @@ def ObterAtivoPorId(ativoId: int):
             )
         
         return usuario
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/ObterAtivosPorUsuarioId/{usuarioId}")
+def ObterAtivosPorUsuarioId(usuarioId: int):
+    try:
+        
+        investimentos = _ativoAplicacao.ObterAtivosPorUsuarioId(usuarioId)
+
+        investimentosResposta = []
+
+        for investimento, ativo in investimentos:
+            cotacaoAtual = CotacaoServico.ObterCotacaoAtualPorTag(ativo.Tag)
+            investimentosResposta.append(
+                InvestimentosDeUmUsuario(
+                    ativoId = ativo.Id,
+                    investimentoId = investimento.Id,
+                    nomeAtivo = ativo.Nome,
+                    tag = ativo.Tag,
+                    quantidadeAcoes = investimento.QuantidadeAcoes,
+                    precoMedio = investimento.PrecoMedio,
+                    cotacao = cotacaoAtual,
+                    rendimento = round(((cotacaoAtual - investimento.PrecoMedio) / investimento.PrecoMedio) * 100, 2),
+                    totalInvestido = round(investimento.PrecoMedio * investimento.QuantidadeAcoes, 2),
+                    rendimentoTotal = round(cotacaoAtual * investimento.QuantidadeAcoes, 2)
+                )
+            )
+
+        return investimentosResposta
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 

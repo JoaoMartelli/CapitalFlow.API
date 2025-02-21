@@ -13,8 +13,5 @@ class InvestimentoRepositorio:
         self._contexto.merge(investimento)
         self._contexto.commit()
 
-    def ObterTodosInvestimentos(self):
-        return self._contexto.query(Investimento).filter_by(Ativo = True).all()
-    
     def ObterInvestimentoPorId(self, id):
         return self._contexto.query(Investimento).filter_by(Id = id, Ativo = True).first()
